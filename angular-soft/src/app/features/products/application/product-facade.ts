@@ -46,22 +46,35 @@ export class ProductFacade {
         this._loading.set(true);
         //limpiamos cualquier error anterior
         this._error.set(null);
+        //reiniciamos la condicion de exito antes de guardar, si anteriormente se guardo
+        //entonces se reinicia el proceso.
         this._success.set(false);
+        //limpiamos cualquier producto crreado anteriormente
         this._createProduct.set(null);
 
+        //llamamos al servicio que  manda el producto a la API
         this.productApi.create(product)
+            //cuando termine la peticion apagamos el loading
             .pipe(finalize( () => this._loading.set(false) ) )
+            //nos suscribimos  a la respuesta http, es necesario subscribirnos a la peticion
             .subscribe({
+                //si la API responde de forma correcta  se ejecuta todo lo que existe de forma interna 
+                //en la peticion
                 next:(response)=>{
+                    //marcamos la peticion como exitos
                     this._success.set(true);
+                    //guardamos el producto que regresó a la API.
                     this._createProduct.set(response.data);
                 },
+                ///si la api falla ocurre esto.
             error: ()=> {
+                //guardamos un mensaje de error para mostrarlo en pantall.
                 this._error.set("No se Pudo guardar el producto, Intenta nuevamente.");
             }
 
         });
     }
+    //limpiamos todo el facade y lo regresamos al estado inicial
     resetState():void{
         this._loading.set(false);
         this._error.set(null);
