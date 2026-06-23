@@ -8,5 +8,10 @@ import { Product } from '../domain/product.model';
 })
 export class ProductApi {
     private readonly  http =inject(HttpClient);
+    private readonly baseUrl = 'https://localhost:7000/api/products';
+
+    create(product:Product):Observable<Product>{
+        return this.http.post<Product>(this.baseUrl,product);
+    }
   
 }
