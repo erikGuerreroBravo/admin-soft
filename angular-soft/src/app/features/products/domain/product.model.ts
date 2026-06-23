@@ -3,6 +3,6 @@ export interface Product {
     name:string;
     description:string;
     category:string[];
-    prince:number;
+    price:number;
     imageFiles:string;
 }
