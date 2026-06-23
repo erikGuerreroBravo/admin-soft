@@ -1,6 +1,12 @@
-import { Service } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Product } from '../domain/product.model';
 
-@Service()
+@Injectable({
+  providedIn: 'root'
+})
 export class ProductApi {
+    private readonly  http =inject(HttpClient);
   
 }
