@@ -20,8 +20,9 @@ export class ProductCreate {
   readonly productFacade = inject(ProductFacade);
 
   readonly imagePreview = signal('assets/products/default-product.png');
- 
-  product: Product = {
+  
+  //utilizamos un signal, tipado de Product 
+  readonly product= signal<Product> ({
     name: '',
     description: '',
     category: [],
@@ -29,32 +30,52 @@ export class ProductCreate {
     price: 0,
     // inicializamos la imagen con una imagen por default del sistema
     imageFiles: 'assets/products/default-product.png'
+  });
+
+  categoryText = signal('');
+
+  updateProductField<K extends keyof Product>(
+    field: K,
+    value: Product[K]
+  ): void {
+    this.product.update(product => ({
+      ...product,
+      [field]: value
+    }));
   }
 
-  categoryText ='';
-  onImageChange(event:Event):void{
+  updateCategoryText(value: string): void {
+    this.categoryText.set(value);
+  }
+
+  onImageChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    if(!file){
-      return;
+
+    if (!file) return;
+
+    const localPath = `assets/products/${file.name}`;
+
+    this.updateProductField('imageFiles', localPath);
+    this.imagePreview.set(localPath);
     }
 
-    const localPath =`assets/products/${file.name}`
-    this.product.imageFiles = localPath;
-    this.imagePreview.set(localPath);
-
-  }
 
 
-
-  saveProduct(): void{
-    this.product.category = this.categoryText
+  saveProduct(): void {
+    const categories = this.categoryText()
       .split(',')
       .map(category => category.trim())
       .filter(category => category.length > 0);
 
-      this.productFacade.create(this.product);
+    const productToSave: Product = {
+      ...this.product(),
+      category: categories
+    };
+
+    this.productFacade.create(productToSave);
   }
+  
   resetForm():void{
     this.product =  {
       name: '',
