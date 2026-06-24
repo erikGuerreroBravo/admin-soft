@@ -75,19 +75,18 @@ export class ProductCreate {
 
     this.productFacade.create(productToSave);
   }
-  
-  resetForm():void{
-    this.product =  {
+
+  resetForm(): void {
+    this.product.set({
       name: '',
       description: '',
       category: [],
       price: 0,
       imageFiles: 'assets/products/default-product.png'
-    };
+    });
 
-    this.categoryText ='';
+    this.categoryText.set('');
     this.imagePreview.set('assets/products/default-product.png');
-
     this.productFacade.resetState();
   }
 
