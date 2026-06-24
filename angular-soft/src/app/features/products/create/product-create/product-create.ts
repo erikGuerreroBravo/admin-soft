@@ -36,6 +36,7 @@ export class ProductCreate {
   categoryText = signal('');
   //este metodo se asegura de unicamente trabajar con las propiedades adecuadas del object product
   //de esta manera no se pueden enviar valores no validos de la proiedad.
+  //field es solo una propiedad valida de product
   updateProductField<K extends keyof Product>(
     field: K,
     value: Product[K]
