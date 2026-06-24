@@ -21,7 +21,8 @@ export class ProductCreate {
 
   readonly imagePreview = signal('assets/products/default-product.png');
   
-  //utilizamos un signal, tipado de Product 
+  //utilizamos un signal, tipado de Product ahora signal es un objeto que envuelve un product
+  //los valores se leen a traves de una funcion
   readonly product= signal<Product> ({
     name: '',
     description: '',
@@ -33,11 +34,17 @@ export class ProductCreate {
   });
 
   categoryText = signal('');
-
+  //este metodo se asegura de unicamente trabajar con las propiedades adecuadas del object product
+  //de esta manera no se pueden enviar valores no validos de la proiedad.
   updateProductField<K extends keyof Product>(
     field: K,
     value: Product[K]
   ): void {
+    //este metodo update se encarga de actualizar el valor del objeto product pero utilizando 
+    //los valores anteriores del objeto envuelto en la signal
+    //debemos entenderlo asi: toma el objeto product el actual y copia sus valores del objeto
+    //ahora cambia solo el valor del campo modificado, solo se actualiza el campo unico
+    //guarda el nuevo valor modificado del objeto.
     this.product.update(product => ({
       ...product,
       [field]: value
@@ -45,6 +52,7 @@ export class ProductCreate {
   }
 
   updateCategoryText(value: string): void {
+    //set es un metodo que se aplica a signal para actualizar todo el signal y su contenido
     this.categoryText.set(value);
   }
 
@@ -57,6 +65,7 @@ export class ProductCreate {
     const localPath = `assets/products/${file.name}`;
 
     this.updateProductField('imageFiles', localPath);
+    //modificamos el valor de signal con set
     this.imagePreview.set(localPath);
     }
 
