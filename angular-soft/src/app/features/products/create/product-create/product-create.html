@@ -1,171 +1,271 @@
-<div class="grid">
-  <div class="col-12">
-    <h1 class="text-4xl font-bold text-900 m-0">
-      Nuevo producto
-    </h1>
+<section class="product-page">
+  <header class="page-header">
+    <div>
+      <h1>Nuevo producto</h1>
 
-    <p class="text-600 mt-2 mb-4">
-      Captura la información del producto para registrarlo en la API.
-    </p>
-  </div>
+      <p>
+        Captura la información del producto para registrarlo en la API.
+      </p>
+    </div>
+  </header>
 
   @if (productFacade.success()) {
-    <div class="col-12">
-      <div class="surface-card border-1 border-green-200 border-round p-3 text-green-700">
-        Producto guardado correctamente.
+    <div class="alert alert-success" role="alert">
+      <span class="alert-icon">✓</span>
+
+      <div>
+        <strong>Producto registrado</strong>
+        <p>El producto se guardó correctamente.</p>
       </div>
     </div>
   }
 
   @if (productFacade.error()) {
-    <div class="col-12">
-      <div class="surface-card border-1 border-red-200 border-round p-3 text-red-700">
-        {{ productFacade.error() }}
+    <div class="alert alert-error" role="alert">
+      <span class="alert-icon">!</span>
+
+      <div>
+        <strong>No fue posible guardar el producto</strong>
+        <p>{{ productFacade.error() }}</p>
       </div>
     </div>
   }
 
-  <div class="col-12 xl:col-8">
+  <div class="product-layout">
     <form
-      class="surface-card border-1 surface-border border-round p-4 shadow-1"
+      class="panel product-form"
       (submit)="saveProduct(); $event.preventDefault()"
+      novalidate
     >
-      <div class="field mb-4">
-        <label class="block text-900 font-semibold mb-2">
-          Nombre
-        </label>
+      <div class="panel-body">
+        <div class="form-field">
+          <label for="product-name">
+            Nombre
+          </label>
 
-        <input
-          type="text"
-          [value]="product().name"
-          (input)="updateProductField('name', $any($event.target).value)"
-          class="p-inputtext p-component w-full"
-          placeholder="Ej. Laptop Dell"
-        />
+          <input
+            id="product-name"
+            type="text"
+            [value]="product().name"
+            (input)="updateProductField(
+              'name',
+              $any($event.target).value
+            )"
+            placeholder="Ej. Laptop Dell"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="product-description">
+            Descripción
+          </label>
+
+          <textarea
+            id="product-description"
+            rows="5"
+            [value]="product().description"
+            (input)="updateProductField(
+              'description',
+              $any($event.target).value
+            )"
+            placeholder="Describe las características principales del producto"
+          ></textarea>
+        </div>
+
+        <div class="form-field">
+          <label for="product-categories">
+            Categorías
+          </label>
+
+          <input
+            id="product-categories"
+            type="text"
+            [value]="categoryText()"
+            (input)="updateCategoryText(
+              $any($event.target).value
+            )"
+            placeholder="Ej. Tecnología, Computadoras"
+            autocomplete="off"
+          />
+
+          <small>
+            Separa cada categoría con una coma.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="product-price">
+            Precio
+          </label>
+
+          <div class="price-input">
+            <span class="price-symbol">$</span>
+
+            <input
+              id="product-price"
+              type="number"
+              [value]="product().price"
+              (input)="updateProductField(
+                'price',
+                +$any($event.target).value
+              )"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="product-image">
+            Imagen del producto
+          </label>
+
+          <div class="file-control">
+            <input
+              id="product-image"
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              (change)="onImageChange($event)"
+            />
+          </div>
+
+          <small>
+            Formatos permitidos: JPG, PNG o WEBP.
+          </small>
+        </div>
       </div>
 
-      <div class="field mb-4">
-        <label class="block text-900 font-semibold mb-2">
-          Descripción
-        </label>
-
-        <textarea
-          rows="5"
-          [value]="product().description"
-          (input)="updateProductField('description', $any($event.target).value)"
-          class="p-inputtext p-component w-full"
-          placeholder="Describe el producto"
-        ></textarea>
-      </div>
-
-      <div class="field mb-4">
-        <label class="block text-900 font-semibold mb-2">
-          Categorías
-        </label>
-
-        <input
-          type="text"
-          [value]="categoryText()"
-          (input)="updateCategoryText($any($event.target).value)"
-          class="p-inputtext p-component w-full"
-          placeholder="Ej. Tecnología, Computadoras"
-        />
-
-        <small class="block text-600 mt-2">
-          Separa cada categoría con coma.
-        </small>
-      </div>
-
-      <div class="field mb-4">
-        <label class="block text-900 font-semibold mb-2">
-          Precio
-        </label>
-
-        <input
-          type="number"
-          [value]="product().price"
-          (input)="updateProductField('price', +$any($event.target).value)"
-          class="p-inputtext p-component w-full"
-          placeholder="0.00"
-          min="0"
-        />
-      </div>
-
-      <div class="field mb-4">
-        <label class="block text-900 font-semibold mb-2">
-          Imagen del producto
-        </label>
-
-        <input
-          type="file"
-          accept="image/*"
-          (change)="onImageChange($event)"
-          class="p-inputtext p-component w-full"
-        />
-
-        <small class="block text-600 mt-2">
-          Por ahora solo guardaremos la ruta local en assets/products.
-        </small>
-      </div>
-
-      <div class="flex justify-content-end gap-3 pt-4 border-top-1 surface-border">
+      <footer class="form-actions">
         <button
           type="button"
+          class="button button-secondary"
+          [disabled]="productFacade.loading()"
           (click)="resetForm()"
-          class="p-button p-component p-button-outlined"
         >
           Limpiar
         </button>
 
         <button
           type="submit"
+          class="button button-primary"
           [disabled]="productFacade.loading()"
-          class="p-button p-component"
         >
-          {{ productFacade.loading() ? 'Guardando...' : 'Guardar producto' }}
+          @if (productFacade.loading()) {
+            <span class="spinner"></span>
+            Guardando...
+          } @else {
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M5 3h12l2 2v16H5V3Zm2 2v14h10V6.5L15.5 5H15v5H8V5H7Zm3 0v3h3V5h-3Zm-1 8h6v4H9v-4Z"
+              />
+            </svg>
+
+            Guardar producto
+          }
         </button>
-      </div>
+      </footer>
     </form>
-  </div>
 
-  <div class="col-12 xl:col-4">
-    <aside class="surface-card border-1 surface-border border-round p-4 shadow-1">
-      <h2 class="text-2xl font-bold text-900 mt-0 mb-4">
-        Vista previa
-      </h2>
-
-      <div
-        class="border-1 surface-border border-round surface-ground flex align-items-center justify-content-center overflow-hidden"
-        style="height: 260px;"
-      >
-        <img
-          [src]="imagePreview()"
-          alt="Vista previa del producto"
-          style="max-width: 100%; max-height: 100%; object-fit: cover;"
-        />
+    <aside class="panel preview-panel">
+      <div class="preview-header">
+        <div>
+          <h2>Vista previa</h2>
+          <p>Así se mostrará el producto.</p>
+        </div>
       </div>
 
-      <div class="border-1 surface-border border-round p-4 mt-3">
-        <h3 class="text-2xl font-bold text-900 mt-0 mb-2">
-          {{ product().name || 'Nombre del producto' }}
-        </h3>
+      <div class="preview-image">
+        @if (imagePreview()) {
+          <img
+            [src]="imagePreview()"
+            [alt]="product().name || 'Vista previa del producto'"
+          />
+        } @else {
+          <div class="image-placeholder">
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M4 4h16v16H4V4Zm2 2v9.2l3.5-3.5 2.5 2.5 2.5-2.5L18 15.2V6H6Zm3 4.5A1.5 1.5 0 1 0 9 7.5a1.5 1.5 0 0 0 0 3Z"
+              />
+            </svg>
 
-        <p class="text-600 mb-4">
-          {{ product().description || 'Descripción del producto' }}
-        </p>
+            <span>Vista previa del producto</span>
+          </div>
+        }
+      </div>
 
-        <p class="text-primary text-2xl font-bold mb-4">
+      <div class="preview-content">
+        <div class="preview-title">
+          <span class="preview-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M3 12V4h8l10 10-7 7L3 12Zm4-5a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"
+              />
+            </svg>
+          </span>
+
+          <div>
+            <h3>
+              {{ product().name || 'Nombre del producto' }}
+            </h3>
+
+            <p>
+              {{
+                product().description ||
+                'Descripción del producto'
+              }}
+            </p>
+          </div>
+        </div>
+
+        <div class="preview-price">
           ${{ product().price || 0 }}
-        </p>
+        </div>
 
-        <p class="text-600 text-sm mb-2">
-          <strong>Imagen:</strong> {{ product().imageFiles }}
-        </p>
+        <div class="preview-detail">
+          <span class="detail-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M4 5h16v14H4V5Zm2 2v8l3.5-3.5 2.5 2.5 2.5-2.5L18 15V7H6Z"
+              />
+            </svg>
+          </span>
 
-        <p class="text-600 text-sm m-0">
-          <strong>Categorías:</strong> {{ categoryText() || 'Sin categorías' }}
-        </p>
+          <div>
+            <strong>Imagen</strong>
+            <span>
+              {{
+                product().imageFiles ||
+                'Sin imagen seleccionada'
+              }}
+            </span>
+          </div>
+        </div>
+
+        <div class="preview-detail">
+          <span class="detail-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M3 6h7l2 2h9v11H3V6Zm2 2v9h14v-7h-7.8l-2-2H5Z"
+              />
+            </svg>
+          </span>
+
+          <div>
+            <strong>Categorías</strong>
+            <span>
+              {{ categoryText() || 'Sin categorías' }}
+            </span>
+          </div>
+        </div>
       </div>
     </aside>
   </div>
-</div>
+</section>
